@@ -1,4 +1,4 @@
-```import numpy as np```
+```import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -92,4 +92,4 @@ print("Attention MAPE:", mape(y_test, attn_pred))
 sample_input = X_test[0:1]
 attention_weights = attn_model.layers[2]([sample_input, sample_input])
 
-print("Attention shape:", attention_weights.shape)
+print("Attention shape:", attention_weights.shape)```

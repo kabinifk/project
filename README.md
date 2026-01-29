@@ -1,4 +1,14 @@
-```import numpy as np
+# Time Series Forecasting using LSTM with Attention
+
+## Project Overview
+This project demonstrates time series forecasting using deep learning.  
+A baseline **LSTM model** is compared with an **LSTM + Attention mechanism** to evaluate performance improvements when modeling temporal dependencies.
+
+---
+
+## Libraries Used
+```python
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -23,6 +33,7 @@ df = pd.DataFrame({
 })
 
 df.head()
+
 from sklearn.preprocessing import MinMaxScaler
 
 scaler = MinMaxScaler()
@@ -44,6 +55,7 @@ val_size = int(0.85 * len(X))
 X_train, y_train = X[:train_size], y[:train_size]
 X_val, y_val = X[train_size:val_size], y[train_size:val_size]
 X_test, y_test = X[val_size:], y[val_size:]
+
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
@@ -55,24 +67,22 @@ baseline = Sequential([
 
 baseline.compile(optimizer="adam", loss="mse")
 baseline.fit(X_train, y_train, epochs=10, validation_data=(X_val, y_val))
-from tensorflow.keras.layers import Input, Attention
+
+from tensorflow.keras.layers import Input, Attention, GlobalAveragePooling1D
 from tensorflow.keras.models import Model
-
-
 
 inputs = Input(shape=(WINDOW , X.shape[2]))
 lstm_out = LSTM(64, return_sequences=True)(inputs)
 
 attention = Attention()([lstm_out, lstm_out])
-
 context = GlobalAveragePooling1D()(attention)
-
 
 output = Dense(1)(context)
 
 attn_model = Model(inputs, output)
 attn_model.compile(optimizer="adam", loss="mse")
 attn_model.fit(X_train, y_train, epochs=15, validation_data=(X_val, y_val))
+
 from sklearn.metrics import mean_squared_error
 
 def rmse(y_true, y_pred):
@@ -89,7 +99,10 @@ print("Attention RMSE:", rmse(y_test, attn_pred))
 
 print("Baseline MAPE:", mape(y_test, baseline_pred))
 print("Attention MAPE:", mape(y_test, attn_pred))
+
 sample_input = X_test[0:1]
 attention_weights = attn_model.layers[2]([sample_input, sample_input])
 
-print("Attention shape:", attention_weights.shape)```
+print("Attention shape:", attention_weights.shape)
+
+```
